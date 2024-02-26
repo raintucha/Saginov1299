@@ -1,0 +1,73 @@
+import java.util.ArrayList;
+import java.util.List;
+
+
+interface WeatherObserver {
+    void update(String weather);
+}
+
+
+interface WeatherSubject {
+    void addObserver(WeatherObserver observer);
+    void removeObserver(WeatherObserver observer);
+    void notifyObservers();
+}
+
+
+class WeatherStation implements WeatherSubject {
+    private List<WeatherObserver> observers = new ArrayList<>();
+    private String currentWeather;
+
+    public void setWeather(String weather) {
+        this.currentWeather = weather;
+        notifyObservers();
+    }
+
+    @Override
+    public void addObserver(WeatherObserver observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(WeatherObserver observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (WeatherObserver observer : observers) {
+            observer.update(currentWeather);
+        }
+    }
+}
+
+
+class WeatherDisplay implements WeatherObserver {
+    private String displayedWeather;
+
+    @Override
+    public void update(String weather) {
+        this.displayedWeather = weather;
+        System.out.println("Weather Display: The current weather is " + displayedWeather);
+    }
+}
+
+
+public class Main {
+    public static void main(String[] args) {
+
+        WeatherStation weatherStation = new WeatherStation();
+
+
+        WeatherDisplay display1 = new WeatherDisplay();
+        WeatherDisplay display2 = new WeatherDisplay();
+
+
+        weatherStation.addObserver(display1);
+        weatherStation.addObserver(display2);
+
+
+        weatherStation.setWeather("Sunny");
+        weatherStation.setWeather("Rainy");
+    }
+}
